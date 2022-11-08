@@ -20,6 +20,10 @@ When you start working on a new lemma or theorem, create a new branch for this, 
 
 If your branch involves changes to other places in the paper that someone else is also working on, it may make sense to have a treelike structure of one branch for both your changes, and then branches off of that branch for your two interacting lemmas that you are editing. You can then merge your sub-branches into that branch more regularly, to keep each other's notations aligned, without needing to merge things into main until both lemmas are up to date and harmonized with each other.
 
+# Software suggestions
+
+The [GitHub Desktop client](https://desktop.github.com/) should be more than sufficient for your git needs.
+
 # Do's and Do nots for editing
 
 There are some things that make sense to do when editing in a "linear" fashion with no or little versioning that are bad practices when working in git. Here are some of them:
