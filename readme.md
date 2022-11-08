@@ -10,6 +10,16 @@ We can also make use of the GitHub issue tracker to keep track of changes that n
 
 The ideal is that the version of the paper in the main branch of the repository is always in a nice and readable state, without scratchpadding or scattered meta comments - it may be very incomplete, but what is in there should look like it is ready to be submitted.
 
+# The general git development workflow
+
+We will assume that you already know the basics of how git works, so these instructions are intended to explain the right workflow to use it efficiently, not to explain those basics. If you do not know the basics, there is a decent [guide to the theory](https://idrissi.eu/post/git-2-theory) here. For the practical side, see the software suggestions heading.
+
+You want the main branch to always be in a state of "ready to publish except with holes and omissions" - things should either not be there at all, or be in there in a state where you are happy for a reviewer to read it.
+
+When you start working on a new lemma or theorem, create a new branch for this, and work on it in that branch. Then, when it is in a state you are happy to include in the paper, create a pull request - and your collaborators can see the changes being made in the pull request, and comment on them and discuss before it is merged into main.
+
+If your branch involves changes to other places in the paper that someone else is also working on, it may make sense to have a treelike structure of one branch for both your changes, and then branches off of that branch for your two interacting lemmas that you are editing. You can then merge your sub-branches into that branch more regularly, to keep each other's notations aligned, without needing to merge things into main until both lemmas are up to date and harmonized with each other.
+
 # Do's and Do nots for editing
 
 There are some things that make sense to do when editing in a "linear" fashion with no or little versioning that are bad practices when working in git. Here are some of them:
