@@ -24,7 +24,7 @@ If your branch involves changes to other places in the paper that someone else i
 
 The [GitHub Desktop client](https://desktop.github.com/) should be more than sufficient for your git needs.
 
-# Do's and Do nots for editing
+# Do's and Do nots/Patterns and antipatterns
 
 There are some things that make sense to do when editing in a "linear" fashion with no or little versioning that are bad practices when working in git. Here are some of them:
 
@@ -38,5 +38,6 @@ What you should do instead is the same thing you would do in handwritten notes -
 5. Avoid "scratchpadding" in the main branch - things in the main branch should not need to be cleaned up later, they should be in a ready state. Of course, one may discover errors or possible improvements that necessitate changes - but if one is *aware* of changes that still need to be made, the branch should not be merged into the main branch before those changes have been made.
 6. Commits should be atomic, unless they are just a few typo fixes. That is, each commit should contain one logical unit of changes to one specific thing. For example, if you are changing your notation from $\alpha$ to $\mathcal{A}$, you should have a single commit where every instance of `\alpha` is changed to `\mathcal{A}`. If you are changing a step in a proof, the commit should contain only those changes. So, you should neither be committing logically disjoint changes in the same commit, nor splitting logical units of change into multiple commits. If each branch reflects the logical unit of a theorem or a lemma, each commit should also be a smaller logical unit inside the theorem.
 7. There should be no `.tex` files in the repo that are not included into the actual paper. At a glance, one will assume that everything in there will be included into the actual paper, so make sure this assumption is true. When editing in a linear fashion, like on Overleaf, it can make sense to move large sections one removes into a non-included file with a name like `lemma_3_backup.tex` - this is not necessary in git, since the removed text will still be there in the version history, and should be avoided as unnecessarily confusing.
+8. Commit messages should be used to explain why a change was made - what was wrong with the previous version or why the new version is better. Use them to save your collaborators the work of figuring out why a change was made.
 
 These standards should be adhered to very strictly in the main branch, but can be much slacker inside a branch in progress - the branch should converge to following these standards as it matures towards being ready to merge into the main branch.
