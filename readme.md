@@ -1,6 +1,8 @@
 # Writing a paper in LaTeX with git
 
-This repository is a template repository for writing papers in LaTeX. It contains some of the barebones structure you might want, and a collection of imports and convenience commands (like `\E{}` for $\mathbb{E}[\cdot]$). It also has some guidelines and tutorials for the right workflow to make this type of editing work well, with justifications for why they are worth the effort.
+This repository is a template repository for writing papers in LaTeX. It contains a tufte-latex template for a handout - but more importantly it contains a GitHub action to compile the .tex files whenever there is a new commit. So in principle, you can write a paper in the GitHub editor, without ever needing to install a TeX compiler. A knockoff Overleaf without all the good features - but with better git integration.
+
+It also has some guidelines and tutorials for the right workflow to make this type of editing work well, with justifications for why they are worth the effort.
 
 # Why use git with GitHub instead of just Overleaf?
 
@@ -22,7 +24,7 @@ If your branch involves changes to other places in the paper that someone else i
 
 # Software suggestions
 
-The [GitHub Desktop client](https://desktop.github.com/) should be more than sufficient for your git needs.
+The [GitHub Desktop client](https://desktop.github.com/) should be more than sufficient for your git needs. For actual editing of the LaTeX, as mentioned in the intro you can theoretically do without, since the Continuous Integration will compile things for you. In practice, you probably want an actual LaTeX editor for any serious needs.
 
 # Do's and Do nots/Patterns and antipatterns
 
