@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.1)  9 JAN 2023 16:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.1)  9 JAN 2023 16:39
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -742,15 +742,17 @@ Overfull \hbox (1.32198pt too wide) in paragraph at lines 34--34
 
 LaTeX Warning: Marginpar on page 1 moved.
 
-LaTeX Font Info:    Trying to load font information for T1+fvm on input line 56
+LaTeX Font Info:    Trying to load font information for T1+fvm on input line 38
 .
 (/opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 8.50006pt on input line 56.
+(Font)              scaled to size 7.65005pt on input line 38.
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 8.50006pt on input line 53.
 
-Overfull \hbox (7.68355pt too wide) in paragraph at lines 55--57
+Overfull \hbox (7.68355pt too wide) in paragraph at lines 52--54
 \T1/pplj/m/n/10 This style pro-vides \T1/pplj/m/sc/10/50ls a\T1/pplj/m/n/10 - a
 nd \T1/pplj/m/sc/10/50ls b\T1/pplj/m/n/10 -heads (that is, [] and []), 
  []
@@ -759,9 +761,7 @@ nd \T1/pplj/m/sc/10/50ls b\T1/pplj/m/n/10 -heads (that is, [] and []),
 LaTeX Warning: Marginpar on page 1 moved.
 
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 7.65005pt on input line 67.
-LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 6.80005pt on input line 75.
+(Font)              scaled to size 6.80005pt on input line 72.
 
 LaTeX Warning: Marginpar on page 1 moved.
 
@@ -779,44 +779,44 @@ pdfTeX warning (ext4): destination with the same identifier (name{cite.Tufte200
 6}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.131 ...t one location,\cite{Tufte2006,Tufte1990}
+l.128 ...t one location,\cite{Tufte2006,Tufte1990}
                                                    you can
 
 LaTeX Warning: Marginpar on page 2 moved.
 
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 14
-0.
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 13
+7.
 (/opt/texlive/texdir/texmf-dist/tex/latex/psnfss/t1phv.fd
 File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
 )
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 8.99994pt on input line 140.
-<graphics//helix.pdf, id=47, 221.8689pt x 201.71361pt>
+(Font)              scaled to size 8.99994pt on input line 137.
+<graphics//helix.pdf, id=49, 221.8689pt x 201.71361pt>
 File: graphics//helix.pdf Graphic file (type pdf)
 <use graphics//helix.pdf>
-Package pdftex.def Info: graphics//helix.pdf  used on input line 150.
+Package pdftex.def Info: graphics//helix.pdf  used on input line 147.
 (pdftex.def)             Requested size: 144.00317pt x 130.92145pt.
  [2]
 
 LaTeX Warning: Marginpar on page 3 moved.
 
-<graphics//sine.pdf, id=59, 505.89pt x 51.04068pt>
+<graphics//sine.pdf, id=61, 505.89pt x 51.04068pt>
 File: graphics//sine.pdf Graphic file (type pdf)
 <use graphics//sine.pdf>
-Package pdftex.def Info: graphics//sine.pdf  used on input line 179.
+Package pdftex.def Info: graphics//sine.pdf  used on input line 176.
 (pdftex.def)             Requested size: 480.0061pt x 48.42917pt.
-<graphics//hilbertcurves.pdf, id=60, 308.47346pt x 76.72565pt>
+<graphics//hilbertcurves.pdf, id=62, 308.47346pt x 76.72565pt>
 File: graphics//hilbertcurves.pdf Graphic file (type pdf)
 <use graphics//hilbertcurves.pdf>
-Package pdftex.def Info: graphics//hilbertcurves.pdf  used on input line 186.
+Package pdftex.def Info: graphics//hilbertcurves.pdf  used on input line 183.
 (pdftex.def)             Requested size: 312.0029pt x 77.6035pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 186--193
+Underfull \hbox (badness 10000) in paragraph at lines 183--190
 
  []
 
-LaTeX Font Info:    Trying to load font information for T1+ppl on input line 20
-1.
+LaTeX Font Info:    Trying to load font information for T1+ppl on input line 19
+8.
 (/opt/texlive/texdir/texmf-dist/tex/latex/psnfss/t1ppl.fd
 File: t1ppl.fd 2001/06/04 font definitions for T1/ppl.
 ) [3 <./graphics//helix.pdf> <./graphics//sine.pdf> <./graphics//hilbertcurves.
@@ -863,10 +863,10 @@ ic/fpl/fplrij8a.pfb></opt/texlive/texdir/texmf-dist/fonts/type1/public/bera/fvm
 r8a.pfb></opt/texlive/texdir/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></o
 pt/texlive/texdir/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></opt/texlive/
 texdir/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on sample-handout.pdf (5 pages, 139866 bytes).
+Output written on sample-handout.pdf (5 pages, 140122 bytes).
 PDF statistics:
- 157 PDF objects out of 1000 (max. 8388607)
- 124 compressed objects within 2 object streams
+ 159 PDF objects out of 1000 (max. 8388607)
+ 126 compressed objects within 2 object streams
  21 named destinations out of 1000 (max. 500000)
  1608 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1086,6 +1086,11 @@ INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/mathpazo/zplmr7t.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplri9d.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm
+INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
+INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
+INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
+INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
+INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8t.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplr9t.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/mathpazo/zplmr7m.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/mathpazo/zplmr7y.tfm
@@ -1098,13 +1103,8 @@ INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplri9d.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplrc9d.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplrc9d.tfm
-INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
-INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
-INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
-INPUT /opt/texlive/texdir/texmf-dist/tex/latex/bera/t1fvm.fd
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8t.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplri9d.tfm
-INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8t.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8t.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplri9d.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/adobe/palatino/pplri9d.vf
@@ -1136,6 +1136,8 @@ INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/adobe/palatino/pplr9d.vf
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/mathpazo/fplmr.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplrc8r.tfm
+INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/public/bera/fvmr8t.vf
+INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8r.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/adobe/palatino/pplr9d.vf
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/mathpazo/fplmr.tfm
@@ -1155,8 +1157,6 @@ INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/adobe/palatino/pplri9d.vf
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplri8r.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/mathpazo/fplmri.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/palatino/pplrij8r.tfm
-INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/public/bera/fvmr8t.vf
-INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8r.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/public/bera/fvmr8t.vf
 INPUT /opt/texlive/texdir/texmf-dist/fonts/tfm/public/bera/fvmr8r.tfm
 INPUT /opt/texlive/texdir/texmf-dist/fonts/vf/public/mathpazo/zplmr7y.vf

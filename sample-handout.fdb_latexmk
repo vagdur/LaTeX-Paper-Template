@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex sample-handout"] 1673282127 "sample-handout.aux" "sample-handout.bbl" "sample-handout" 1673282129 0
-  "./sample-handout.bib" 1673282124 1400 4ebfe710dbe5b523c4e0d98372dc4946 ""
+["bibtex sample-handout"] 1673282127 "sample-handout.aux" "sample-handout.bbl" "sample-handout" 1673282377 0
+  "./sample-handout.bib" 1673282375 1400 4ebfe710dbe5b523c4e0d98372dc4946 ""
   "/opt/texlive/texdir/texmf-dist/bibtex/bst/natbib/plainnat.bst" 1233624470 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "sample-handout.aux" 1673282128 3920 298888ddf89a877d126f0e8a73a56640 "pdflatex"
+  "sample-handout.aux" 1673282377 3920 298888ddf89a877d126f0e8a73a56640 "pdflatex"
   (generated)
   "sample-handout.bbl"
   "sample-handout.blg"
   (rewritten before read)
-["pdflatex"] 1673282127 "sample-handout.tex" "sample-handout.pdf" "sample-handout" 1673282129 0
-  "/dev/null" 1673282124 0 d41d8cd98f00b204e9800998ecf8427e ""
+["pdflatex"] 1673282376 "sample-handout.tex" "sample-handout.pdf" "sample-handout" 1673282377 0
+  "/dev/null" 1673282375 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/opt/texlive/texdir/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/opt/texlive/texdir/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/opt/texlive/texdir/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm" 1136768653 4712 9ef4d7d106579d4b136e1529e1a4533c ""
@@ -161,15 +161,15 @@
   "/opt/texlive/texdir/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1672535614 4623321 6abbe6b7353361ea94d693a930a55e17 ""
   "/opt/texlive/texdir/texmf-var/web2c/pdftex/pdflatex.fmt" 1672535757 7874664 004a18cd5a2cccd70536874e6c3d8d01 ""
   "/opt/texlive/texdir/texmf.cnf" 1672535606 555 bd60ff59e4d560b42d96b004436f91d3 ""
-  "graphics//helix.pdf" 1673282124 9436 a37d6482b483c71a7881e781c4b94af9 ""
-  "graphics//hilbertcurves.pdf" 1673282124 29629 69a17dada5c1553466dccb30d8fdf6e7 ""
-  "graphics//sine.pdf" 1673282124 6069 dcb821f8816c16dae479bc0f27412a2a ""
-  "sample-handout.aux" 1673282128 3920 298888ddf89a877d126f0e8a73a56640 "pdflatex"
-  "sample-handout.bbl" 1673282127 814 003bfeceb18d5578578328eeee39cef6 "bibtex sample-handout"
-  "sample-handout.out" 1673282128 819 edc503f03e86d6d2a8c4f515b85326af "pdflatex"
-  "sample-handout.tex" 1673282124 11689 8cb6417df4a49c2f84b175d830d5035b ""
-  "tufte-common.def" 1673282124 70890 25e493088a97ada26cc5c8b5c88d8925 ""
-  "tufte-handout.cls" 1673282124 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
+  "graphics//helix.pdf" 1673282375 9436 a37d6482b483c71a7881e781c4b94af9 ""
+  "graphics//hilbertcurves.pdf" 1673282375 29629 69a17dada5c1553466dccb30d8fdf6e7 ""
+  "graphics//sine.pdf" 1673282375 6069 dcb821f8816c16dae479bc0f27412a2a ""
+  "sample-handout.aux" 1673282377 3920 298888ddf89a877d126f0e8a73a56640 "pdflatex"
+  "sample-handout.bbl" 1673282375 814 003bfeceb18d5578578328eeee39cef6 "bibtex sample-handout"
+  "sample-handout.out" 1673282377 819 edc503f03e86d6d2a8c4f515b85326af "pdflatex"
+  "sample-handout.tex" 1673282375 11657 538466fd97e3424902bc41adc843f942 ""
+  "tufte-common.def" 1673282375 70890 25e493088a97ada26cc5c8b5c88d8925 ""
+  "tufte-handout.cls" 1673282375 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
   "sample-handout.aux"
   "sample-handout.log"
