@@ -34,7 +34,11 @@ jobs:
             echo "skip_diff=true" >> $GITHUB_OUTPUT
           fi
 
-      # Build the specified roots with latex-action (brings full TeX toolchain)
+      - name: Install latexdiff
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y latexdiff
+
       - name: Build TeX roots
         uses: xu-cheng/latex-action@v4
         with:
@@ -45,9 +49,8 @@ jobs:
           # latexmk_use_lualatex: true
           # latexmk_shell_escape: true
           # Install latexdiff ahead of time via tlmgr so it's available next step
-          pre_compile: tlmgr install latexdiff
 
-      - name: Prepare old/new trees for latexdiff
+      - name: Prepare old/new trees
         if: steps.first.outputs.skip_diff != 'true'
         run: |
           git worktree add ../old HEAD~1
@@ -56,7 +59,6 @@ jobs:
       - name: Generate latexdiff sources
         if: steps.first.outputs.skip_diff != 'true'
         run: |
-          set -e
           mkdir -p "$DIFF_DIR"
           while IFS= read -r ROOT || [ -n "$ROOT" ]; do
             [ -z "$ROOT" ] && continue
