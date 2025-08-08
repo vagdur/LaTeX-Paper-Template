@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MAIN_TEX: main.tex   # <-- set this to your top-level TeX file
-      DIFF_DIR: diffs
+      DIFF_FILE: diff      # Files (diff.tex and diff.pdf) where diff will be shown
     steps:
       - name: Check out repo with full history
         uses: actions/checkout@v4
@@ -48,10 +48,8 @@ jobs:
       - name: Run latexdiff (flatten includes) and compile
         if: steps.firstcheck.outputs.skip != 'true'
         run: |
-          mkdir -p "$DIFF_DIR"
-          NEW_SHA=$(git rev-parse --short HEAD)
-          DIFF_TEX="$DIFF_DIR/diff-$NEW_SHA.tex"
-          DIFF_PDF="$DIFF_DIR/diff-$NEW_SHA.pdf"
+          DIFF_TEX="$DIFF_FILE.tex"
+          DIFF_PDF="$DIFF_FILE.pdf"
 
           # Create a flattened diff TeX
           latexdiff --flatten "../old/$MAIN_TEX" "../new/$MAIN_TEX" > "$DIFF_TEX"
@@ -67,10 +65,9 @@ jobs:
       - name: Commit the PDF back to the repo
         if: steps.firstcheck.outputs.skip != 'true'
         run: |
-          NEW_SHA=$(git rev-parse --short HEAD)
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$DIFF_DIR/diff-$NEW_SHA.pdf"
+          git add "$DIFF_FILE.pdf"
           # Use [skip ci] to avoid retriggering this workflow
           git commit -m "Add latexdiff PDF for $NEW_SHA [skip ci]" || echo "Nothing to commit."
           git push
