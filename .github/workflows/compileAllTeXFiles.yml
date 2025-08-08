@@ -76,7 +76,6 @@ jobs:
         uses: xu-cheng/latex-action@v4
         with:
           root_file: ${{ env.DIFF_DIR }}/**/diff.tex
-          glob_root_file: true
           # texlive_version: 2024
           # If diffs use minted or similar, uncomment shell escape:
           # latexmk_shell_escape: true
