@@ -19,7 +19,7 @@ jobs:
       # List your TeX root files here, one per line. Paths allowed,
       # and globs are supported.
       ROOT_FILES: |
-        'main.tex'
+        main.tex
       DIFF_DIR: diffs
 
     steps:
