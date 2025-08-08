@@ -22,7 +22,7 @@ jobs:
       DIFF_DIR: diffs
 
     steps:
-      - name: Checkout (full history for diff)
+      - name: Checkout with history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -34,23 +34,18 @@ jobs:
             echo "skip_diff=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install TeX Live + tools (latexmk, latexdiff)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended texlive-science texlive-binaries \
-            latexmk ghostscript
-
-      - name: Build specified TeX roots (PDFs for current commit)
-        run: |
-          set -e
-          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
-            [ -z "$ROOT" ] && continue
-            echo "::group::Building $ROOT"
-            latexmk -pdf -interaction=nonstopmode -halt-on-error "$ROOT"
-            echo "::endgroup::"
-          done <<< "$ROOT_FILES"
+      # Build the specified roots with latex-action (brings full TeX toolchain)
+      - name: Build TeX roots
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: ${{ env.ROOT_FILES }}
+          # optional: set a TeX Live year for reproducibility
+          # texlive_version: 2024
+          # Enable shell-escape if your doc needs it
+          # latexmk_use_lualatex: true
+          # latexmk_shell_escape: true
+          # Install latexdiff ahead of time via tlmgr so it's available next step
+          pre_compile: tlmgr install latexdiff
 
       - name: Prepare old/new trees for latexdiff
         if: steps.first.outputs.skip_diff != 'true'
@@ -67,26 +62,22 @@ jobs:
             [ -z "$ROOT" ] && continue
             # Sanitize path for folder name: replace / with __
             SAFE="${ROOT//\//__}"
-            OUT_FOLDER="$DIFF_DIR/$SAFE"
-            mkdir -p "$OUT_FOLDER"
-            echo "::group::latexdiff $ROOT -> $OUT_FOLDER/diff.tex"
-            latexdiff --flatten "../old/$ROOT" "../new/$ROOT" > "$OUT_FOLDER/diff.tex"
+            OUT_DIR="$DIFF_DIR/$SAFE"
+            mkdir -p "$OUT_DIR"
+            echo "::group::latexdiff $ROOT"
+            latexdiff --flatten "../old/$ROOT" "../new/$ROOT" > "$OUT_DIR/diff.tex"
             echo "::endgroup::"
           done <<< "$ROOT_FILES"
 
-      - name: Compile diffs to fixed names (diff.pdf)
+      - name: Compile diffs to PDF with latex-action
         if: steps.first.outputs.skip_diff != 'true'
-        run: |
-          set -e
-          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
-            [ -z "$ROOT" ] && continue
-            SAFE="${ROOT//\//__}"
-            OUT_FOLDER="$DIFF_DIR/$SAFE"
-            echo "::group::latexmk $OUT_FOLDER/diff.tex"
-            latexmk -pdf -interaction=nonstopmode -halt-on-error "$OUT_FOLDER/diff.tex"
-            test -f "$OUT_FOLDER/diff.pdf"
-            echo "::endgroup::"
-          done <<< "$ROOT_FILES"
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: ${{ env.DIFF_DIR }}/**/diff.tex
+          glob_root_file: true
+          # texlive_version: 2024
+          # If diffs use minted or similar, uncomment shell escape:
+          # latexmk_shell_escape: true
 
       - name: Commit updated diff PDFs
         if: steps.first.outputs.skip_diff != 'true'
