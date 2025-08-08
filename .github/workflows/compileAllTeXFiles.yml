@@ -16,9 +16,10 @@ jobs:
   build_and_diff:
     runs-on: ubuntu-latest
     env:
-      # List your TeX root files here, one per line (paths allowed)
+      # List your TeX root files here, one per line. Paths allowed,
+      # and globs are supported.
       ROOT_FILES: |
-        main.tex
+        'main.tex'
       DIFF_DIR: diffs
 
     steps:
@@ -32,6 +33,26 @@ jobs:
         run: |
           if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
             echo "skip_diff=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Resolve ROOT_FILES globs to concrete files
+        id: resolve
+        run: |
+          set -euo pipefail
+          shopt -s nullglob globstar
+          : > files-to-diff.txt
+          while IFS= read -r pattern || [ -n "$pattern" ]; do
+            [[ -z "$pattern" ]] && continue
+            # Expand the glob; if nothing matches, continue silently
+            matches=( $pattern )
+            for f in "${matches[@]}"; do
+              # Only include regular files
+              [[ -f "$f" ]] && printf '%s\n' "$f" >> files-to-diff.txt
+            done
+          done <<< "${ROOT_FILES}"
+          if [[ ! -s files-to-diff.txt ]]; then
+            echo "No files matched ROOT_FILES patterns" >&2
+            exit 1
           fi
 
       - name: Install latexdiff
@@ -69,7 +90,7 @@ jobs:
             echo "::group::latexdiff $ROOT"
             latexdiff --flatten "../old/$ROOT" "../new/$ROOT" > "$OUT_DIR/diff.tex"
             echo "::endgroup::"
-          done <<< "$ROOT_FILES"
+          done < files-to-diff.txt
 
       - name: Compile diffs to PDF with latex-action
         if: steps.first.outputs.skip_diff != 'true'
