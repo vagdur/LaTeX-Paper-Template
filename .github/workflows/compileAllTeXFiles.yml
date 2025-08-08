@@ -97,9 +97,39 @@ jobs:
         uses: xu-cheng/latex-action@v4
         with:
           root_file: ${{ env.DIFF_DIR }}/**/diff.tex
+          continue_on_error: true
           # texlive_version: 2024
           # If diffs use minted or similar, uncomment shell escape:
           # latexmk_shell_escape: true
+
+      - name: Report missing diff PDFs (non-fatal warnings)
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          set -euo pipefail
+          failed=0
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [[ -z "$ROOT" ]] && continue
+            SAFE="${ROOT//\//__}"
+            OUT_DIR="$DIFF_DIR/$SAFE"
+            PDF="$OUT_DIR/diff.pdf"
+            LOG="$OUT_DIR/diff.log"
+            if [[ ! -f "$PDF" ]]; then
+              echo "::warning title=latexdiff compile failed::No PDF produced for '$ROOT'. See log at $LOG (if present)."
+              failed=$((failed+1))
+            fi
+          done < files-to-diff.txt
+          echo "Missing PDFs: $failed"
+
+      - name: Upload diff logs
+        if: steps.first.outputs.skip_diff != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: latexdiff-logs
+          path: |
+            ${{
+              env.DIFF_DIR
+            }}/**/diff.log
+          if-no-files-found: ignore
 
       - name: Commit updated diff PDFs
         if: steps.first.outputs.skip_diff != 'true'
