@@ -18,8 +18,7 @@ jobs:
     env:
       # List your TeX root files here, one per line (paths allowed)
       ROOT_FILES: |
-        thesis.tex
-        paper1/main.tex
+        main.tex
       DIFF_DIR: diffs
 
     steps:
