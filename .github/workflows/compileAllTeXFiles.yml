@@ -1,17 +1,99 @@
-name: Build LaTeX document
-on: [push]
+name: Build and latexdiff
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: write
+
+# Prevent overlapping pushes from multiple runs
+concurrency:
+  group: commit-to-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  build_latex:
+  build_and_diff:
     runs-on: ubuntu-latest
+    env:
+      # List your TeX root files here, one per line (paths allowed)
+      ROOT_FILES: |
+        thesis.tex
+        paper1/main.tex
+      DIFF_DIR: diffs
+
     steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v3
-      - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v2
+      - name: Checkout (full history for diff)
+        uses: actions/checkout@v4
         with:
-           root_file: "*.tex"
-           glob_root_file: true
-      - name: Commit & Push changes
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Detect first commit (no diff possible)
+        id: first
+        run: |
+          if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "skip_diff=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install TeX Live + tools (latexmk, latexdiff)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-science texlive-binaries \
+            latexmk ghostscript
+
+      - name: Build specified TeX roots (PDFs for current commit)
+        run: |
+          set -e
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [ -z "$ROOT" ] && continue
+            echo "::group::Building $ROOT"
+            latexmk -pdf -interaction=nonstopmode -halt-on-error "$ROOT"
+            echo "::endgroup::"
+          done <<< "$ROOT_FILES"
+
+      - name: Prepare old/new trees for latexdiff
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          git worktree add ../old HEAD~1
+          git worktree add ../new HEAD
+
+      - name: Generate latexdiff sources
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          set -e
+          mkdir -p "$DIFF_DIR"
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [ -z "$ROOT" ] && continue
+            # Sanitize path for folder name: replace / with __
+            SAFE="${ROOT//\//__}"
+            OUT_FOLDER="$DIFF_DIR/$SAFE"
+            mkdir -p "$OUT_FOLDER"
+            echo "::group::latexdiff $ROOT -> $OUT_FOLDER/diff.tex"
+            latexdiff --flatten "../old/$ROOT" "../new/$ROOT" > "$OUT_FOLDER/diff.tex"
+            echo "::endgroup::"
+          done <<< "$ROOT_FILES"
+
+      - name: Compile diffs to fixed names (diff.pdf)
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          set -e
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [ -z "$ROOT" ] && continue
+            SAFE="${ROOT//\//__}"
+            OUT_FOLDER="$DIFF_DIR/$SAFE"
+            echo "::group::latexmk $OUT_FOLDER/diff.tex"
+            latexmk -pdf -interaction=nonstopmode -halt-on-error "$OUT_FOLDER/diff.tex"
+            test -f "$OUT_FOLDER/diff.pdf"
+            echo "::endgroup::"
+          done <<< "$ROOT_FILES"
+
+      - name: Commit updated diff PDFs
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DIFF_DIR"/*/diff.pdf || true
+          git commit -m "Update latexdiff PDFs [skip ci]" || echo "Nothing to commit"
+          git push || echo "No changes to push"
