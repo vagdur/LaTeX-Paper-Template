@@ -33,7 +33,15 @@ jobs:
       - name: Detect first commit (no diff possible)
         id: first
         run: |
-          if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Git log --oneline -3:"
+          git log --oneline -3
+          echo "Checking for HEAD~1:"
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "HEAD~1 exists: $(git rev-parse HEAD~1)"
+            echo "skip_diff=false" >> $GITHUB_OUTPUT
+          else
+            echo "HEAD~1 does not exist - this is the first commit"
             echo "skip_diff=true" >> $GITHUB_OUTPUT
           fi
 
