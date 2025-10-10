@@ -1,17 +1,199 @@
-name: Build LaTeX document
-on: [push]
+name: Build and latexdiff
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: write
+
+# Prevent overlapping pushes from multiple runs
+concurrency:
+  group: commit-to-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  build_latex:
+  build_and_diff:
     runs-on: ubuntu-latest
+    container: 
+      image: texlive/texlive:latest
+    env:
+      # List your TeX root files here, one per line. Paths allowed,
+      # and globs are supported.
+      ROOT_FILES: |
+        main.tex
+      DIFF_DIR: diffs
+
     steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v3
-      - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v2
+      - name: Checkout with history
+        uses: actions/checkout@v4
         with:
-           root_file: "*.tex"
-           glob_root_file: true
-      - name: Commit & Push changes
-        uses: actions-js/push@master
+          fetch-depth: 0
+
+      - name: Configure git safe directory
+        run: |
+          git config --global --add safe.directory /__w/LaTeX-Paper-Template/LaTeX-Paper-Template
+ 
+      - name: Detect first commit (no diff possible)
+        id: first
+        run: |
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Git log --oneline -3:"
+          git log --oneline -3
+          echo "Checking for HEAD~1:"
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "HEAD~1 exists: $(git rev-parse HEAD~1)"
+            echo "skip_diff=false" >> $GITHUB_OUTPUT
+          else
+            echo "HEAD~1 does not exist - this is the first commit"
+            echo "skip_diff=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Resolve ROOT_FILES globs to concrete files
+        id: resolve
+        run: |
+          set -euo pipefail
+          shopt -s nullglob globstar
+          : > files-to-diff.txt
+          while IFS= read -r pattern || [ -n "$pattern" ]; do
+            [[ -z "$pattern" ]] && continue
+            # Expand the glob; if nothing matches, continue silently
+            matches=( $pattern )
+            for f in "${matches[@]}"; do
+              # Only include regular files
+              [[ -f "$f" ]] && printf '%s\n' "$f" >> files-to-diff.txt
+            done
+          done <<< "${ROOT_FILES}"
+          if [[ ! -s files-to-diff.txt ]]; then
+            echo "No files matched ROOT_FILES patterns" >&2
+            exit 1
+          fi
+        shell: bash
+
+      - name: Build TeX roots
+        run: |
+          echo "Compiling LaTeX files..."
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [ -z "$ROOT" ] && continue
+            echo "::group::Compiling $ROOT"
+            echo "Compiling $ROOT..."
+            # Run pdflatex twice for cross-references
+            pdflatex -interaction=nonstopmode -halt-on-error "$ROOT" || {
+              echo "::error::Failed to compile $ROOT"
+              exit 1
+            }
+            pdflatex -interaction=nonstopmode -halt-on-error "$ROOT" || {
+              echo "::error::Failed to compile $ROOT (second pass)"
+              exit 1
+            }
+            echo "✅ Successfully compiled $ROOT"
+            echo "::endgroup::"
+          done < files-to-diff.txt
+        shell: bash
+
+      - name: Prepare old/new trees
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          git worktree add ../old HEAD~1
+          git worktree add ../new HEAD
+
+      - name: Generate latexdiff sources
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          mkdir -p "$DIFF_DIR"
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [ -z "$ROOT" ] && continue
+            # Sanitize path for folder name: replace / with __
+            SAFE="${ROOT//\//__}"
+            OUT_DIR="$DIFF_DIR/$SAFE"
+            mkdir -p "$OUT_DIR"
+            echo "::group::latexdiff $ROOT"
+            latexdiff --flatten "../old/$ROOT" "../new/$ROOT" > "$OUT_DIR/diff.tex"
+            echo "::endgroup::"
+          done < files-to-diff.txt
+        shell: bash
+
+      - name: Compile diffs to PDF
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          echo "Compiling latexdiff files..."
+          find "$DIFF_DIR" -name "diff.tex" | while read -r DIFF_FILE; do
+            echo "::group::Compiling $DIFF_FILE"
+            echo "Compiling $DIFF_FILE..."
+            # Change to the directory containing the .tex file before compilation
+            DIFF_DIR_PATH=$(dirname "$DIFF_FILE")
+            cd "$DIFF_DIR_PATH"
+            DIFF_FILE_NAME=$(basename "$DIFF_FILE")
+            
+            # Run pdflatex twice for cross-references
+            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE_NAME" || {
+              echo "::warning::Failed to compile $DIFF_FILE (first pass)"
+            }
+            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE_NAME" || {
+              echo "::warning::Failed to compile $DIFF_FILE (second pass)"
+            }
+            # Debug: Show current working directory and files in the diff directory
+            echo "🔍 Debug: Current working directory: $(pwd)"
+            echo "🔍 Debug: Files in current directory:"
+            ls -la . || echo "Directory not found or not accessible"
+            echo "🔍 Debug: Expected PDF path: diff.pdf"
+            echo "🔍 Debug: Files matching *.pdf in current directory:"
+            find . -name "*.pdf" -type f 2>/dev/null || echo "No PDF files found"
+            
+            if [ -f "diff.pdf" ]; then
+              echo "✅ Successfully compiled $DIFF_FILE"
+            else
+              echo "❌ No PDF produced for $DIFF_FILE"
+            fi
+            echo "::endgroup::"
+          done
+        shell: bash
+
+      - name: Report missing diff PDFs (non-fatal warnings)
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          set -euo pipefail
+          failed=0
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [[ -z "$ROOT" ]] && continue
+            SAFE="${ROOT//\//__}"
+            OUT_DIR="$DIFF_DIR/$SAFE"
+            PDF="$OUT_DIR/diff.pdf"
+            LOG="$OUT_DIR/diff.log"
+            
+            # Debug: Show what we're looking for and what exists
+            echo "🔍 Debug: Checking for PDF at: $PDF"
+            echo "🔍 Debug: OUT_DIR contents:"
+            ls -la "$OUT_DIR" 2>/dev/null || echo "OUT_DIR not found: $OUT_DIR"
+            echo "🔍 Debug: Files matching *.pdf in $OUT_DIR:"
+            find "$OUT_DIR" -name "*.pdf" -type f 2>/dev/null || echo "No PDF files found in $OUT_DIR"
+            
+            if [[ ! -f "$PDF" ]]; then
+              echo "::warning title=latexdiff compile failed::No PDF produced for '$ROOT'. See log at $LOG (if present)."
+              failed=$((failed+1))
+            else
+              echo "✅ Found PDF at: $PDF"
+            fi
+          done < files-to-diff.txt
+          echo "Missing PDFs: $failed"
+        shell: bash
+
+      - name: Upload diff logs
+        if: steps.first.outputs.skip_diff != 'true'
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          name: latexdiff-logs
+          path: |
+            ${{
+              env.DIFF_DIR
+            }}/**/diff.log
+          if-no-files-found: ignore
+
+      - name: Commit updated diff PDFs
+        if: steps.first.outputs.skip_diff != 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DIFF_DIR"/*/diff.pdf || true
+          git commit -m "Update latexdiff PDFs [skip ci]" || echo "Nothing to commit"
+          git push || echo "No changes to push"
