@@ -146,7 +146,8 @@ jobs:
             pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE" || {
               echo "::warning::Failed to compile $DIFF_FILE (second pass)"
             }
-            if [ -f "${DIFF_FILE%.tex}.pdf" ]; then
+            DIFF_DIR_PATH=$(dirname "$DIFF_FILE")
+            if [ -f "$DIFF_DIR_PATH/$(basename "${DIFF_FILE%.tex}.pdf")" ]; then
               echo "✅ Successfully compiled $DIFF_FILE"
             else
               echo "❌ No PDF produced for $DIFF_FILE"
