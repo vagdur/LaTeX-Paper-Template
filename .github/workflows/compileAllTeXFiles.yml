@@ -15,6 +15,8 @@ concurrency:
 jobs:
   build_and_diff:
     runs-on: ubuntu-latest
+    container: 
+      image: texlive/texlive:latest-ubuntu
     env:
       # List your TeX root files here, one per line. Paths allowed,
       # and globs are supported.
@@ -55,10 +57,24 @@ jobs:
             exit 1
           fi
 
-      - name: Install latexdiff
+      - name: Test if latexdiff is available
         run: |
-          sudo apt-get update
-          sudo apt-get install -y latexdiff
+          if command -v latexdiff >/dev/null 2>&1; then
+            echo "✅ latexdiff is available in the container"
+            latexdiff --version
+          else
+            echo "❌ latexdiff is NOT available in the container"
+            echo "Will need to install it manually"
+          fi
+
+      - name: Install latexdiff if not available
+        run: |
+          if ! command -v latexdiff >/dev/null 2>&1; then
+            echo "Installing latexdiff via tlmgr..."
+            tlmgr install latexdiff
+          else
+            echo "latexdiff already available, skipping installation"
+          fi
 
       - name: Build TeX roots
         uses: xu-cheng/latex-action@v4
