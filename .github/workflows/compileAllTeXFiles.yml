@@ -78,15 +78,25 @@ jobs:
           fi
 
       - name: Build TeX roots
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: ${{ env.ROOT_FILES }}
-          # optional: set a TeX Live year for reproducibility
-          # texlive_version: 2024
-          # Enable shell-escape if your doc needs it
-          # latexmk_use_lualatex: true
-          # latexmk_shell_escape: true
-          # Install latexdiff ahead of time via tlmgr so it's available next step
+        run: |
+          echo "Compiling LaTeX files..."
+          while IFS= read -r ROOT || [ -n "$ROOT" ]; do
+            [ -z "$ROOT" ] && continue
+            echo "::group::Compiling $ROOT"
+            echo "Compiling $ROOT..."
+            # Run pdflatex twice for cross-references
+            pdflatex -interaction=nonstopmode -halt-on-error "$ROOT" || {
+              echo "::error::Failed to compile $ROOT"
+              exit 1
+            }
+            pdflatex -interaction=nonstopmode -halt-on-error "$ROOT" || {
+              echo "::error::Failed to compile $ROOT (second pass)"
+              exit 1
+            }
+            echo "✅ Successfully compiled $ROOT"
+            echo "::endgroup::"
+          done < files-to-diff.txt
+        shell: bash
 
       - name: Prepare old/new trees
         if: steps.first.outputs.skip_diff != 'true'
@@ -110,15 +120,28 @@ jobs:
           done < files-to-diff.txt
         shell: bash
 
-      - name: Compile diffs to PDF with latex-action
+      - name: Compile diffs to PDF
         if: steps.first.outputs.skip_diff != 'true'
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: ${{ env.DIFF_DIR }}/**/diff.tex
-          continue_on_error: true
-          # texlive_version: 2024
-          # If diffs use minted or similar, uncomment shell escape:
-          # latexmk_shell_escape: true
+        run: |
+          echo "Compiling latexdiff files..."
+          find "$DIFF_DIR" -name "diff.tex" | while read -r DIFF_FILE; do
+            echo "::group::Compiling $DIFF_FILE"
+            echo "Compiling $DIFF_FILE..."
+            # Run pdflatex twice for cross-references
+            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE" || {
+              echo "::warning::Failed to compile $DIFF_FILE (first pass)"
+            }
+            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE" || {
+              echo "::warning::Failed to compile $DIFF_FILE (second pass)"
+            }
+            if [ -f "${DIFF_FILE%.tex}.pdf" ]; then
+              echo "✅ Successfully compiled $DIFF_FILE"
+            else
+              echo "❌ No PDF produced for $DIFF_FILE"
+            fi
+            echo "::endgroup::"
+          done
+        shell: bash
 
       - name: Report missing diff PDFs (non-fatal warnings)
         if: steps.first.outputs.skip_diff != 'true'
