@@ -70,25 +70,6 @@ jobs:
           fi
         shell: bash
 
-      - name: Test if latexdiff is available
-        run: |
-          if command -v latexdiff >/dev/null 2>&1; then
-            echo "✅ latexdiff is available in the container"
-            latexdiff --version
-          else
-            echo "❌ latexdiff is NOT available in the container"
-            echo "Will need to install it manually"
-          fi
-
-      - name: Install latexdiff if not available
-        run: |
-          if ! command -v latexdiff >/dev/null 2>&1; then
-            echo "Installing latexdiff via tlmgr..."
-            tlmgr install latexdiff
-          else
-            echo "latexdiff already available, skipping installation"
-          fi
-
       - name: Build TeX roots
         run: |
           echo "Compiling LaTeX files..."
