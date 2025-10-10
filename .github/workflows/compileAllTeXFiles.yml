@@ -30,6 +30,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure git safe directory
+        run: |
+          git config --global --add safe.directory /__w/LaTeX-Paper-Template/LaTeX-Paper-Template
+ 
       - name: Detect first commit (no diff possible)
         id: first
         run: |
