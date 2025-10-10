@@ -139,24 +139,27 @@ jobs:
           find "$DIFF_DIR" -name "diff.tex" | while read -r DIFF_FILE; do
             echo "::group::Compiling $DIFF_FILE"
             echo "Compiling $DIFF_FILE..."
+            # Change to the directory containing the .tex file before compilation
+            DIFF_DIR_PATH=$(dirname "$DIFF_FILE")
+            cd "$DIFF_DIR_PATH"
+            DIFF_FILE_NAME=$(basename "$DIFF_FILE")
+            
             # Run pdflatex twice for cross-references
-            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE" || {
+            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE_NAME" || {
               echo "::warning::Failed to compile $DIFF_FILE (first pass)"
             }
-            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE" || {
+            pdflatex -interaction=nonstopmode -halt-on-error "$DIFF_FILE_NAME" || {
               echo "::warning::Failed to compile $DIFF_FILE (second pass)"
             }
             # Debug: Show current working directory and files in the diff directory
             echo "🔍 Debug: Current working directory: $(pwd)"
-            DIFF_DIR_PATH=$(dirname "$DIFF_FILE")
-            echo "🔍 Debug: Looking for PDF in directory: $DIFF_DIR_PATH"
-            echo "🔍 Debug: Files in $DIFF_DIR_PATH:"
-            ls -la "$DIFF_DIR_PATH" || echo "Directory not found or not accessible"
-            echo "🔍 Debug: Expected PDF path: ${DIFF_FILE%.tex}.pdf"
-            echo "🔍 Debug: Files matching *.pdf in $DIFF_DIR_PATH:"
-            find "$DIFF_DIR_PATH" -name "*.pdf" -type f 2>/dev/null || echo "No PDF files found"
+            echo "🔍 Debug: Files in current directory:"
+            ls -la . || echo "Directory not found or not accessible"
+            echo "🔍 Debug: Expected PDF path: diff.pdf"
+            echo "🔍 Debug: Files matching *.pdf in current directory:"
+            find . -name "*.pdf" -type f 2>/dev/null || echo "No PDF files found"
             
-            if [ -f "${DIFF_FILE%.tex}.pdf" ]; then
+            if [ -f "diff.pdf" ]; then
               echo "✅ Successfully compiled $DIFF_FILE"
             else
               echo "❌ No PDF produced for $DIFF_FILE"
