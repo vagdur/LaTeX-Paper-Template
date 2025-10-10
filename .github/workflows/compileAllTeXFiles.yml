@@ -16,7 +16,7 @@ jobs:
   build_and_diff:
     runs-on: ubuntu-latest
     container: 
-      image: texlive/texlive:latest-ubuntu
+      image: texlive/texlive:latest
     env:
       # List your TeX root files here, one per line. Paths allowed,
       # and globs are supported.
