@@ -56,6 +56,7 @@ jobs:
             echo "No files matched ROOT_FILES patterns" >&2
             exit 1
           fi
+        shell: bash
 
       - name: Test if latexdiff is available
         run: |
@@ -107,6 +108,7 @@ jobs:
             latexdiff --flatten "../old/$ROOT" "../new/$ROOT" > "$OUT_DIR/diff.tex"
             echo "::endgroup::"
           done < files-to-diff.txt
+        shell: bash
 
       - name: Compile diffs to PDF with latex-action
         if: steps.first.outputs.skip_diff != 'true'
@@ -135,6 +137,7 @@ jobs:
             fi
           done < files-to-diff.txt
           echo "Missing PDFs: $failed"
+        shell: bash
 
       - name: Upload diff logs
         if: steps.first.outputs.skip_diff != 'true'
