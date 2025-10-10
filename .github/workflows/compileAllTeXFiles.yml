@@ -149,7 +149,6 @@ jobs:
             # Debug: Show current working directory and files in the diff directory
             echo "🔍 Debug: Current working directory: $(pwd)"
             DIFF_DIR_PATH=$(dirname "$DIFF_FILE")
-            if [ -f "$DIFF_DIR_PATH/$(basename "${DIFF_FILE%.tex}.pdf")" ]; then
             echo "🔍 Debug: Looking for PDF in directory: $DIFF_DIR_PATH"
             echo "🔍 Debug: Files in $DIFF_DIR_PATH:"
             ls -la "$DIFF_DIR_PATH" || echo "Directory not found or not accessible"
