@@ -91,6 +91,14 @@ jobs:
           done < files-to-diff.txt
         shell: bash
 
+      - name: Commit compiled PDFs
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ./*.pdf
+          git commit -m "Update compiled PDFs [skip ci]" || echo "Nothing to commit"
+          git push || echo "No changes to push"
+      
       - name: Prepare old/new trees
         if: steps.first.outputs.skip_diff != 'true'
         run: |
