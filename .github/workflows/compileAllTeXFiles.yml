@@ -32,7 +32,7 @@ jobs:
 
       - name: Configure git safe directory
         run: |
-          git config --global --add safe.directory /__w/LaTeX-Paper-Template/LaTeX-Paper-Template
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
  
       - name: Detect first commit (no diff possible)
         id: first
