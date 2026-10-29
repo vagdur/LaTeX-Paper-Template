@@ -60,6 +60,7 @@ jobs:
             echo "No base commit available - skipping diff"
             echo "skip_diff=true" >> $GITHUB_OUTPUT
           fi
+        shell: bash
 
       - name: Resolve ROOT_FILES globs to concrete files
         id: resolve
