@@ -34,20 +34,33 @@ jobs:
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
  
-      - name: Detect first commit (no diff possible)
+      - name: Determine base commit to diff against
         id: first
+        env:
+          BEFORE: ${{ github.event.before }}
         run: |
+          # Diff against the remote tip before this push, so every commit in
+          # the push is covered (not just HEAD~1, which misses earlier commits
+          # in a multi-commit push and, for a merge commit, is only the
+          # first parent). Fall back to HEAD~1 for new branches, force
+          # pushes where the old tip is unavailable, and reruns.
           echo "Current commit: $(git rev-parse HEAD)"
-          echo "Git log --oneline -3:"
-          git log --oneline -3
-          echo "Checking for HEAD~1:"
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            echo "HEAD~1 exists: $(git rev-parse HEAD~1)"
+          BASE=""
+          if [[ -n "$BEFORE" && ! "$BEFORE" =~ ^0+$ ]] \
+              && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            BASE="$BEFORE"
+          elif git rev-parse HEAD~1 >/dev/null 2>&1; then
+            BASE="$(git rev-parse HEAD~1)"
+          fi
+          if [[ -n "$BASE" ]]; then
+            echo "Diff base: $BASE"
+            echo "base=$BASE" >> $GITHUB_OUTPUT
             echo "skip_diff=false" >> $GITHUB_OUTPUT
           else
-            echo "HEAD~1 does not exist - this is the first commit"
+            echo "No base commit available - skipping diff"
             echo "skip_diff=true" >> $GITHUB_OUTPUT
           fi
+        shell: bash
 
       - name: Resolve ROOT_FILES globs to concrete files
         id: resolve
@@ -107,6 +120,8 @@ jobs:
       - name: Detect roots with changed dependencies
         id: changed
         if: steps.first.outputs.skip_diff != 'true'
+        env:
+          BASE: ${{ steps.first.outputs.base }}
         run: |
           # A diff PDF is only worth regenerating (and committing) if a file
           # the root depends on changed. PDFs are not byte-reproducible, so
@@ -117,7 +132,7 @@ jobs:
             [ -z "$ROOT" ] && continue
             SAFE="${ROOT//\//__}"
             mapfile -t deps < "$RUNNER_TEMP/deps/$SAFE.txt"
-            if [ "${#deps[@]}" -eq 0 ] || ! git diff --quiet HEAD~1 HEAD -- "${deps[@]}"; then
+            if [ "${#deps[@]}" -eq 0 ] || ! git diff --quiet "$BASE" HEAD -- "${deps[@]}"; then
               echo "Changed: $ROOT"
               printf '%s\n' "$ROOT" >> roots-changed.txt
             else
@@ -133,8 +148,10 @@ jobs:
 
       - name: Prepare old/new trees
         if: steps.changed.outputs.any_changed == 'true'
+        env:
+          BASE: ${{ steps.first.outputs.base }}
         run: |
-          git worktree add ../old HEAD~1
+          git worktree add ../old "$BASE"
           git worktree add ../new HEAD
 
       - name: Generate latexdiff sources
